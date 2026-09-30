@@ -9,6 +9,7 @@
 | 目标 | **`mediatek/mt7981`** |
 | 内核 | **5.4**（`KERNEL_PATCHVER:=5.4`） |
 | 无线 | MTK 闭源 **`kmod-mt_wifi`**（mtwifi）+ `mtwifi-cfg` + `luci-app-mtwifi-cfg` |
+| 主题 | **`luci-theme-design`**（首次启动自动设为默认，脚本 `files/etc/uci-defaults/99-luci-theme-design`） |
 | 插件 | 无额外插件，仅 target/router 默认包（含 LuCI） |
 | 镜像 | `factory.bin`（首次）/ `sysupgrade.bin`（升级） |
 
@@ -124,7 +125,23 @@ saveenv
 
 ---
 
-## 四、想加东西怎么办
+## 四、关于 luci-theme-design
+
+官方 21.02 的 luci feed 里**没有** Design 主题，所以工作流在 `feeds install` 之后
+从 `gngpp/luci-theme-design` 外挂克隆到 `package/luci-theme-design`，再走正常打包。
+该主题 `LUCI_DEPENDS` 为空，静态资源路径 `/luci-static/design`。
+
+首启时 `files/etc/uci-defaults/99-luci-theme-design` 会执行：
+
+```sh
+uci set luci.main.mediaurlbase=/luci-static/design
+uci commit luci
+```
+
+所以开机进 LuCI 就是 Design 主题。想换回 bootstrap 的话，在触发 workflow 时把
+`theme` 留空即可（`theme_repo` 也随之忽略）。
+
+## 五、想加东西怎么办
 
 编辑 `config/fur602-mt7981-5.4-mtwifi.config`，追加
 `CONFIG_PACKAGE_<包名>=y` 即可；或在触发 workflow 时填 `extra_packages`。
@@ -142,7 +159,7 @@ saveenv
 
 ---
 
-## 五、本地 Linux 编译（可选）
+## 六、本地 Linux 编译（可选）
 
 ```bash
 git clone --depth=1 -b openwrt-21.02 https://github.com/hanwckf/immortalwrt-mt798x.git
