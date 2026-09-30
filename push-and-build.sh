@@ -69,7 +69,8 @@ git branch -q -M "$BRANCH"
 echo "==> 推送 ..."
 git remote remove origin 2>/dev/null || true
 git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${LOGIN}/${NAME}.git"
-git push -q -u origin "$BRANCH"
+# 关掉系统凭据管理器（helper-selector 会在无交互环境里卡死），token 已内嵌在 URL 里
+GIT_TERMINAL_PROMPT=0 git -c credential.helper= -c core.askPass= push -q -u origin "$BRANCH"
 echo "    已推送到 https://github.com/$LOGIN/$NAME"
 
 if [ "$NEW_REPO" = "1" ]; then sleep 5; fi
