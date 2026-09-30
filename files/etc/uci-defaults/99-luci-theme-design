@@ -1,0 +1,11 @@
+#!/bin/sh
+# 首次启动时把 LuCI 默认主题切换为 Design
+[ -d /www/luci-static/design ] || exit 0
+
+uci -q batch <<'EOF'
+set luci.main.mediaurlbase=/luci-static/design
+set luci.main.lang=zh_cn
+commit luci
+EOF
+
+exit 0

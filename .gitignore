@@ -1,0 +1,4 @@
+openwrt/
+artifact/
+*.bin
+*.tar
